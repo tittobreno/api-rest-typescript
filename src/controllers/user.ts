@@ -5,14 +5,16 @@ export const createUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
-    return res.status(400).json("all fields are mandatory");
+    return res.status(400).json({ message: "all fields are mandatory" });
   }
 
   try {
-    const checkEmailExists = await knex("users").where({ email });
+    const checkEmailExists = await knex("users").where({ email }).first();
 
     if (checkEmailExists) {
-      return res.status(400).json("the email provided already exists");
+      return res
+        .status(400)
+        .json({ message: "the email provided already exists" });
     }
 
     await knex("users").insert({
@@ -21,6 +23,6 @@ export const createUser = async (req: Request, res: Response) => {
       password,
     });
 
-    return res.status(201).json({ message: "Created" });
+    return res.status(201).json({ message: "created" });
   } catch (error) {}
 };
