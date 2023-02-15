@@ -4,13 +4,23 @@ import knex from "../database/dbConnect";
 export const createUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
 
-  //verificar se existe email cadastrado
+  if (!name || !email || !password) {
+    return res.status(400).json("all fields are mandatory");
+  }
 
-  await knex("users").insert({
-    name,
-    email,
-    password,
-  });
+  try {
+    const checkEmailExists = await knex("users").where({ email });
 
-  res.status(201).json({ message: "Created" });
+    if (checkEmailExists) {
+      return res.status(400).json("the email provided already exists");
+    }
+
+    await knex("users").insert({
+      name,
+      email,
+      password,
+    });
+
+    return res.status(201).json({ message: "Created" });
+  } catch (error) {}
 };
