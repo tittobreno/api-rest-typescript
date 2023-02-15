@@ -1,20 +1,18 @@
 import { Request, Response } from "express";
 import knex from "../database/dbConnect";
 import bcrypt from "bcrypt";
+import { createUserBody } from "../validation/schemaUser";
+
 export const createUser = async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
-
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: "all fields are mandatory" });
-  }
-
   try {
+    const { name, email, password } = createUserBody.parse(req.body);
+
     const checkEmailExists = await knex("users").where({ email }).first();
 
     if (checkEmailExists) {
       return res
         .status(400)
-        .json({ message: "the email provided already exists" });
+        .json({ message: "The email provided already exists" });
     }
 
     const encryptedPassword = await bcrypt.hash(password, 10);
@@ -23,12 +21,11 @@ export const createUser = async (req: Request, res: Response) => {
       name,
       email,
       password: encryptedPassword,
+      created_at: new Date(),
     });
 
-    return res.status(201).json({ message: "created" });
-  } catch (error: any) {
-    return res
-      .status(500)
-      .json({ message: "Internal server error" + error.message });
+    return res.status(201).json();
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" + error });
   }
 };
