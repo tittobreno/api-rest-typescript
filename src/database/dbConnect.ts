@@ -2,7 +2,6 @@ import "dotenv/config";
 import Knex from "knex";
 
 const port = process.env.DB_PORT as number | undefined;
-
 const knex = Knex({
   client: "pg",
   connection: {
