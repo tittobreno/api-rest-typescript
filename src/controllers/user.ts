@@ -5,6 +5,7 @@ import { createUserBody, signInBody } from "../validation/schemaUser";
 import jwt, { Secret } from "jsonwebtoken";
 import "dotenv/config";
 import { UserModel } from "../models/user";
+import { TokenPayload } from "../types";
 
 export const createUser = async (req: Request, res: Response) => {
   try {
@@ -36,11 +37,6 @@ export const createUser = async (req: Request, res: Response) => {
 };
 
 export const signIn = async (req: Request, res: Response) => {
-  interface Payload {
-    id: string;
-    email: string;
-  }
-
   try {
     const { email, password } = signInBody.parse(req.body);
 
@@ -49,7 +45,6 @@ export const signIn = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    console.log(user);
 
     const checkIfPasswordIsCorrect = await bcrypt.compare(
       password,
@@ -60,25 +55,20 @@ export const signIn = async (req: Request, res: Response) => {
       res.status(401).json({ message: "Email and/or password is incorrect" });
     }
 
-    const createTokenData: Payload = {
+    const createTokenData: TokenPayload = {
       id: user.id,
-      email: user.email,
+      name: user.name,
     };
 
     const token = jwt.sign(
       createTokenData,
       process.env.PASSWORD_JWT as Secret,
       {
-        expiresIn: "8h",
+        expiresIn: "1h",
       }
     );
 
-    const { password: p, created_at: c, ...userData } = user;
-
-    return res.status(200).json({
-      user: userData,
-      token,
-    });
+    return res.status(200).json({ token });
   } catch (error: any) {
     return res
       .status(500)

@@ -12,3 +12,9 @@ export const signInBody = z.object({
   email: z.string({ required_error: "The email is required" }).email(),
   password: z.string({ required_error: "The password is required" }),
 });
+
+export const authorizationHeaderSchema = z.object({
+  authorization: z.string().refine((value) => value.startsWith("Bearer "), {
+    message: "Invalid token",
+  }),
+});
