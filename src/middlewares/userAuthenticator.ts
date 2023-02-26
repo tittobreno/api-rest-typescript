@@ -21,7 +21,7 @@ const authenticateUser = (req: MyReq, res: Response, next: NextFunction) => {
     return next();
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(401).json({ message: error.message });
+      return res.status(401).json({ message: error });
     }
 
     return res.status(401).json({ message: "Invalid Token" });

@@ -6,6 +6,7 @@ import jwt, { Secret } from "jsonwebtoken";
 import "dotenv/config";
 import { UserModel } from "../models/user";
 import { TokenPayload } from "../types";
+import z from "zod";
 
 export const createUser = async (req: Request, res: Response) => {
   try {
@@ -30,9 +31,13 @@ export const createUser = async (req: Request, res: Response) => {
 
     return res.status(201).json();
   } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return res.status(500).json({ message: error });
+    }
+
     return res
       .status(500)
-      .json({ message: "Internal server error" + " " + error.message });
+      .json({ message: "Internal server error:" + " " + error.message });
   }
 };
 
@@ -70,6 +75,10 @@ export const signIn = async (req: Request, res: Response) => {
 
     return res.status(200).json({ token });
   } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return res.status(500).json({ message: error });
+    }
+
     return res
       .status(500)
       .json({ message: "Internal server error:" + " " + error });
