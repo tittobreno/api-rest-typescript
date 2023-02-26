@@ -1,4 +1,4 @@
-import { Request, Response, Router } from "express";
+import { Response, Router } from "express";
 import { createUser, signIn } from "./controllers/user";
 import authenticateUser from "./middlewares/userAuthenticator";
 import { MyReq } from "./types";

@@ -1,9 +1,9 @@
-import { NextFunction, Response } from "express";
-import { authorizationHeaderSchema } from "../validation/schemaUser";
-import jwt, { Secret } from "jsonwebtoken";
 import "dotenv/config";
-import { MyReq, TokenPayload } from "../types";
+import { NextFunction, Response } from "express";
+import jwt, { Secret } from "jsonwebtoken";
 import z from "zod";
+import { MyReq, TokenPayload } from "../types";
+import { authorizationHeaderSchema } from "../validation/schemaUser";
 
 const authenticateUser = (req: MyReq, res: Response, next: NextFunction) => {
   try {

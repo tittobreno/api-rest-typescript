@@ -1,12 +1,12 @@
-import { Request, Response } from "express";
-import knex from "../database/dbConnect";
 import bcrypt from "bcrypt";
-import { createUserBody, signInBody } from "../validation/schemaUser";
-import jwt, { Secret } from "jsonwebtoken";
 import "dotenv/config";
+import { Request, Response } from "express";
+import jwt, { Secret } from "jsonwebtoken";
+import z from "zod";
+import knex from "../database/dbConnect";
 import { UserModel } from "../models/user";
 import { TokenPayload } from "../types";
-import z from "zod";
+import { createUserBody, signInBody } from "../validation/schemaUser";
 
 export const createUser = async (req: Request, res: Response) => {
   try {
