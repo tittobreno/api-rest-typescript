@@ -13,3 +13,12 @@ CREATE TABLE IF NOT EXISTS categories (
   title TEXT
 );
 
+CREATE TABLE IF NOT EXISTS transactions (
+  id SERIAL PRIMARY KEY,
+  description TEXT,
+  value integer,
+  date DATE NOT NULL DEFAULT NOW(),
+  category_id INTEGER NOT NULLT REFERENCES category(id),
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  type TEXT
+  );
