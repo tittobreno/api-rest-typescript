@@ -1,7 +1,7 @@
 import { Response, Router } from "express";
-import { createUser, signIn } from "./controllers/user";
-import authenticateUser from "./middlewares/userAuthenticator";
-import { MyReq } from "./types";
+import { createUser, signIn } from "../../controllers/user";
+import authenticateUser from "../../middlewares/userAuthenticator";
+import { MyReq } from "../../types";
 const router = Router();
 
 router.post("/cadastrar", createUser);

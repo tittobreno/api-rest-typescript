@@ -7,4 +7,9 @@ CREATE TABLE IF NOT EXISTS users (
   password VARCHAR(60) NOT NULL,
   created_at timestamp
 );
-  
+
+CREATE TABLE IF NOT EXISTS categories (
+  id SERIAL PRIMARY KEY,
+  title TEXT
+);
+
