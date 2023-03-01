@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   description TEXT,
   value integer,
   date DATE NOT NULL DEFAULT NOW(),
-  category_id INTEGER NOT NULL REFERENCES category(id),
+  category_id INTEGER NOT NULL REFERENCES categories(id),
   user_id INTEGER NOT NULL REFERENCES users(id),
   type TEXT
   );
