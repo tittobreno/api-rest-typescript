@@ -17,10 +17,10 @@ CREATE TABLE IF NOT EXISTS transactions (
   id SERIAL PRIMARY KEY,
   description TEXT,
   value integer,
+  type TEXT,
   date DATE NOT NULL DEFAULT NOW(),
   category_id INTEGER NOT NULL REFERENCES categories(id),
-  user_id INTEGER NOT NULL REFERENCES users(id),
-  type TEXT
+  user_id INTEGER NOT NULL REFERENCES users(id)
   );
 
 INSERT INTO categories (title) VALUES
