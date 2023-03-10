@@ -1,16 +1,19 @@
 import { Response } from "express";
+import { z } from "zod";
 import knex from "../database/dbConnect";
 import { MyReq } from "../types";
+import { bodyNewTransaction } from "../validation/schemaTransactions";
 
 export const createTransaction = async (req: MyReq, res: Response) => {
   const userId = req.userData?.id;
-  const { description, value, type, date, category_id } = req.body;
-
-  if (type != "output" && type != "entry") {
-    return res.status(400).json({ message: "Invalid transaction type" });
-  }
 
   try {
+    const { description, value, type, date, category_id } =
+      bodyNewTransaction.parse(req.body);
+
+    if (type != "output" && type != "entry") {
+      return res.status(400).json({ message: "Invalid transaction type" });
+    }
     const authenticateCategory = await knex("categories")
       .where({
         id: category_id,
@@ -36,8 +39,9 @@ export const createTransaction = async (req: MyReq, res: Response) => {
 
     return res.status(201).json(newTransaction);
   } catch (error: any) {
-    return res
-      .status(500)
-      .json({ message: "Internal server error: " + error.message });
+    if (error instanceof z.ZodError) {
+      return res.status(500).json(error.errors);
+    }
+    return res.status(500).json({ message: "Internal server error: " + error });
   }
 };
