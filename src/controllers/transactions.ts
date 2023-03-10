@@ -3,6 +3,40 @@ import { z } from "zod";
 import knex from "../database/dbConnect";
 import { MyReq } from "../types";
 import { bodyNewTransaction } from "../validation/schemaTransactions";
+import { TransactionModel } from "../models/transactions";
+import { CategoryModel } from "../models/categories";
+
+export const listTransactions = async (req: MyReq, res: Response) => {
+  const userId = req.userData?.id;
+  try {
+    const userTransactions: TransactionModel[] = await knex(
+      "transactions"
+    ).where({
+      user_id: userId,
+    });
+
+    const listUserTransactions = await Promise.all(
+      userTransactions.map(async (transaction) => {
+        const category: CategoryModel = await knex("categories")
+          .where({ id: transaction.id })
+          .first();
+
+        const transactionWithCategoryName = {
+          ...transaction,
+          category_name: category.title,
+        };
+
+        return transactionWithCategoryName;
+      })
+    );
+
+    return res.status(200).json(listUserTransactions);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ message: "Internal server error: " + error.message });
+  }
+};
 
 export const createTransaction = async (req: MyReq, res: Response) => {
   const userId = req.userData?.id;
@@ -26,7 +60,7 @@ export const createTransaction = async (req: MyReq, res: Response) => {
         .json({ message: "The category specified not found" });
     }
 
-    const newTransaction = await knex("transactions")
+    const newTransaction: TransactionModel[] = await knex("transactions")
       .insert({
         description,
         value,
