@@ -79,3 +79,21 @@ export const createTransaction = async (req: MyReq, res: Response) => {
     return res.status(500).json({ message: "Internal server error: " + error });
   }
 };
+
+export const detailTransaction = async (req: MyReq, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const transaction = await knex("transactions").where({ id }).first();
+
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    return res.status(200).json(transaction);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ message: "Internal server error " + error.message });
+  }
+};

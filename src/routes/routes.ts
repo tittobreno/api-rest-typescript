@@ -2,6 +2,7 @@ import { Router } from "express";
 import getCategories from "../controllers/categories";
 import {
   createTransaction,
+  detailTransaction,
   listTransactions,
 } from "../controllers/transactions";
 import { createUser, signIn } from "../controllers/user";
@@ -17,5 +18,6 @@ router.get("/categorias", getCategories);
 
 router.get("/transacao/listar", listTransactions);
 router.post("/transacao/cadastrar", createTransaction);
+router.get("/transacao/detalhar/:id", detailTransaction);
 
 export default router;
