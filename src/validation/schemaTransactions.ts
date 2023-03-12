@@ -7,3 +7,7 @@ export const bodyNewTransaction = z.object({
   date: z.string({ required_error: "Date is required" }),
   category_id: z.number({ required_error: "Category id is required" }),
 });
+
+export const schemaDetailTransaction = z.object({
+  id: z.string({ required_error: "ID is required" }),
+});

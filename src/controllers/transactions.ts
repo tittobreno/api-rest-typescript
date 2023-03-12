@@ -2,7 +2,10 @@ import { Response } from "express";
 import { z } from "zod";
 import knex from "../database/dbConnect";
 import { MyReq } from "../types";
-import { bodyNewTransaction } from "../validation/schemaTransactions";
+import {
+  bodyNewTransaction,
+  schemaDetailTransaction,
+} from "../validation/schemaTransactions";
 import { TransactionModel } from "../models/transactions";
 import { CategoryModel } from "../models/categories";
 
@@ -82,7 +85,7 @@ export const createTransaction = async (req: MyReq, res: Response) => {
 
 export const detailTransaction = async (req: MyReq, res: Response) => {
   try {
-    const { id } = req.params;
+    const { id } = schemaDetailTransaction.parse(req.params);
 
     const transaction = await knex("transactions").where({ id }).first();
 
@@ -92,6 +95,10 @@ export const detailTransaction = async (req: MyReq, res: Response) => {
 
     return res.status(200).json(transaction);
   } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return res.status(500).json(error.errors);
+    }
+
     return res
       .status(500)
       .json({ message: "Internal server error " + error.message });
