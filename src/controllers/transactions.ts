@@ -51,7 +51,7 @@ export const createTransaction = async (req: MyReq, res: Response) => {
     if (type != "output" && type != "entry") {
       return res.status(400).json({ message: "Invalid transaction type" });
     }
-    const authenticateCategory = await knex("categories")
+    const authenticateCategory: CategoryModel = await knex("categories")
       .where({
         id: category_id,
       })
@@ -87,7 +87,9 @@ export const detailTransaction = async (req: MyReq, res: Response) => {
   try {
     const { id } = schemaDetailTransaction.parse(req.params);
 
-    const transaction = await knex("transactions").where({ id }).first();
+    const transaction: TransactionModel = await knex("transactions")
+      .where({ id })
+      .first();
 
     if (!transaction) {
       return res.status(404).json({ message: "Transaction not found" });
@@ -110,18 +112,13 @@ export const updateTransaction = async (req: MyReq, res: Response) => {
   const { id } = req.params;
   const userId = req.userData?.id;
   try {
-    const getTransaction = await knex("transactions").where({ id }).first();
-    console.log(getTransaction);
+    const transaction: TransactionModel = await knex("transactions")
+      .where({ id })
+      .first();
 
-    if (!getTransaction) {
+    if (!transaction) {
       return res.status(404).json({ message: "Transaction not found" });
     }
-
-    // const authenticateCategory = await knex("categories")
-    // .where({
-    //   id: category_id,
-    // })
-    // .first();
 
     await knex("transactions")
       .update({ description, value, type, date, category_id, user_id: userId })
