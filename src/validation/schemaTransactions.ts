@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const bodyNewTransaction = z.object({
+export const schemaBodyTransaction = z.object({
   description: z.string({ required_error: "Description is required" }),
   value: z.number({ required_error: "Value is required" }),
   type: z.string({ required_error: "Type is required" }),
