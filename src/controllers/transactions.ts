@@ -4,7 +4,7 @@ import knex from "../database/dbConnect";
 import { MyReq } from "../types";
 import {
   schemaBodyTransaction,
-  schemaDetailTransaction,
+  schemaIdParam,
 } from "../validation/schemaTransactions";
 import { TransactionModel } from "../models/transactions";
 import { CategoryModel } from "../models/categories";
@@ -85,7 +85,7 @@ export const createTransaction = async (req: MyReq, res: Response) => {
 
 export const detailTransaction = async (req: MyReq, res: Response) => {
   try {
-    const { id } = schemaDetailTransaction.parse(req.params);
+    const { id } = schemaIdParam.parse(req.params);
 
     const transaction: TransactionModel = await knex("transactions")
       .where({ id })
@@ -108,9 +108,10 @@ export const detailTransaction = async (req: MyReq, res: Response) => {
 };
 
 export const updateTransaction = async (req: MyReq, res: Response) => {
-  const { id } = req.params;
   const userId = req.userData?.id;
   try {
+    const { id } = schemaIdParam.parse(req.params);
+
     const { description, value, type, date, category_id } =
       schemaBodyTransaction.parse(req.body);
 

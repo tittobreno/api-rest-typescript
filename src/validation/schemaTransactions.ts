@@ -8,6 +8,6 @@ export const schemaBodyTransaction = z.object({
   category_id: z.number({ required_error: "Category id is required" }),
 });
 
-export const schemaDetailTransaction = z.object({
+export const schemaIdParam = z.object({
   id: z.string({ required_error: "ID is required" }),
 });
