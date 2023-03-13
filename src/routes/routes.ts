@@ -4,6 +4,7 @@ import {
   createTransaction,
   detailTransaction,
   listTransactions,
+  updateTransaction,
 } from "../controllers/transactions";
 import { createUser, signIn } from "../controllers/user";
 import authenticateUser from "../middlewares/userAuthenticator";
@@ -19,5 +20,6 @@ router.get("/categorias", getCategories);
 router.get("/transacao/listar", listTransactions);
 router.post("/transacao/cadastrar", createTransaction);
 router.get("/transacao/detalhar/:id", detailTransaction);
+router.put("/transacao/editar/:id", updateTransaction);
 
 export default router;

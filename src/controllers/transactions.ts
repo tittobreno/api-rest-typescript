@@ -104,3 +104,33 @@ export const detailTransaction = async (req: MyReq, res: Response) => {
       .json({ message: "Internal server error " + error.message });
   }
 };
+
+export const updateTransaction = async (req: MyReq, res: Response) => {
+  const { description, value, type, date, category_id } = req.body;
+  const { id } = req.params;
+  const userId = req.userData?.id;
+  try {
+    const getTransaction = await knex("transactions").where({ id }).first();
+    console.log(getTransaction);
+
+    if (!getTransaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    // const authenticateCategory = await knex("categories")
+    // .where({
+    //   id: category_id,
+    // })
+    // .first();
+
+    await knex("transactions")
+      .update({ description, value, type, date, category_id, user_id: userId })
+      .where({ id });
+
+    return res.status(200).json({ message: "Updated successfully" });
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ message: "Internal server error: " + error.message });
+  }
+};
