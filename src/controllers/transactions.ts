@@ -2,10 +2,7 @@ import { Response } from "express";
 import { z } from "zod";
 import knex from "../database/dbConnect";
 import { MyReq } from "../types";
-import {
-  schemaBodyTransaction,
-  schemaIdParam,
-} from "../validation/schemaTransactions";
+import { schemaBodyTransaction } from "../validation/schemaTransactions";
 import { TransactionModel } from "../models/transactions";
 import { CategoryModel } from "../models/categories";
 
@@ -85,7 +82,7 @@ export const createTransaction = async (req: MyReq, res: Response) => {
 
 export const detailTransaction = async (req: MyReq, res: Response) => {
   try {
-    const { id } = schemaIdParam.parse(req.params);
+    const id = parseInt(req.params.id);
 
     const transaction: TransactionModel = await knex("transactions")
       .where({ id })
@@ -110,7 +107,7 @@ export const detailTransaction = async (req: MyReq, res: Response) => {
 export const updateTransaction = async (req: MyReq, res: Response) => {
   const userId = req.userData?.id;
   try {
-    const { id } = schemaIdParam.parse(req.params);
+    const id = parseInt(req.params.id);
 
     const { description, value, type, date, category_id } =
       schemaBodyTransaction.parse(req.body);
@@ -141,7 +138,7 @@ export const updateTransaction = async (req: MyReq, res: Response) => {
 
 export const deleteTransaction = async (req: MyReq, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = parseInt(req.params.id);
 
     const transaction = await knex("transactions").where({ id }).first();
 
