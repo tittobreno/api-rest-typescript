@@ -117,3 +117,18 @@ export const updateUser = async (req: MyReq, res: Response) => {
       .json({ message: "Failed when trying to update user: " + error.message });
   }
 };
+
+export const detailUser = async (req: MyReq, res: Response) => {
+  const idUser = req.userData?.id;
+  try {
+    const user = await knex("users").where({ id: idUser }).first();
+
+    const { password, ...dataUser } = user;
+
+    return res.status(200).json(dataUser);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ message: "Failed to trying to detail user: " + error.message });
+  }
+};

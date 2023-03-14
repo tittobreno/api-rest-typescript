@@ -7,7 +7,12 @@ import {
   listTransactions,
   updateTransaction,
 } from "../controllers/transactions";
-import { createUser, signIn, updateUser } from "../controllers/user";
+import {
+  createUser,
+  detailUser,
+  signIn,
+  updateUser,
+} from "../controllers/user";
 import authenticateUser from "../middlewares/userAuthenticator";
 const router = Router();
 
@@ -17,6 +22,7 @@ router.post("/entrar", signIn);
 router.use(authenticateUser);
 
 router.put("/editar", updateUser);
+router.get("/detalhar", detailUser);
 
 router.get("/categorias", getCategories);
 
