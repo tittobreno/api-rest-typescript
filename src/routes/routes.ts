@@ -7,7 +7,7 @@ import {
   listTransactions,
   updateTransaction,
 } from "../controllers/transactions";
-import { createUser, signIn } from "../controllers/user";
+import { createUser, signIn, updateUser } from "../controllers/user";
 import authenticateUser from "../middlewares/userAuthenticator";
 const router = Router();
 
@@ -15,6 +15,8 @@ router.post("/cadastrar", createUser);
 router.post("/entrar", signIn);
 
 router.use(authenticateUser);
+
+router.put("/editar", updateUser);
 
 router.get("/categorias", getCategories);
 

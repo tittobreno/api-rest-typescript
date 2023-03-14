@@ -5,7 +5,7 @@ import jwt, { Secret } from "jsonwebtoken";
 import z from "zod";
 import knex from "../database/dbConnect";
 import { UserModel } from "../models/user";
-import { TokenPayload } from "../types";
+import { MyReq, TokenPayload } from "../types";
 import { createUserBody, signInBody } from "../validation/schemaUser";
 
 export const createUser = async (req: Request, res: Response) => {
@@ -82,5 +82,38 @@ export const signIn = async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ message: "Failed when trying to login: " + error.message });
+  }
+};
+
+export const updateUser = async (req: MyReq, res: Response) => {
+  const idUser = req.userData?.id;
+  try {
+    const { name, email, password } = createUserBody.parse(req.body);
+
+    const checkEmail = await knex("users")
+      .whereNot({ id: idUser })
+      .andWhere({ email })
+      .first();
+
+    if (checkEmail) {
+      return res
+        .status(401)
+        .json({ message: "The email provided already exists" });
+    }
+
+    const encryptedPassword = await bcrypt.hash(password, 10);
+    await knex("users")
+      .update({ name, email, password: encryptedPassword })
+      .where({ id: idUser });
+
+    return res.status(200).json();
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return res.status(401).json(error.errors);
+    }
+
+    return res
+      .status(500)
+      .json({ message: "Failed when trying to update user: " + error.message });
   }
 };
