@@ -34,7 +34,7 @@ export const listTransactions = async (req: MyReq, res: Response) => {
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: "Internal server error: " + error.message });
+      .json({ message: "Failed to list transactions: " + error.message });
   }
 };
 
@@ -76,7 +76,9 @@ export const createTransaction = async (req: MyReq, res: Response) => {
     if (error instanceof z.ZodError) {
       return res.status(500).json(error.errors);
     }
-    return res.status(500).json({ message: "Internal server error: " + error });
+    return res
+      .status(500)
+      .json({ message: "Failed to create transaction: " + error.message });
   }
 };
 
@@ -100,7 +102,7 @@ export const detailTransaction = async (req: MyReq, res: Response) => {
 
     return res
       .status(500)
-      .json({ message: "Internal server error " + error.message });
+      .json({ message: "Failed to detail transaction " + error.message });
   }
 };
 
@@ -132,7 +134,7 @@ export const updateTransaction = async (req: MyReq, res: Response) => {
 
     return res
       .status(500)
-      .json({ message: "Internal server error: " + error.message });
+      .json({ message: "Failed to update transaction " + error.message });
   }
 };
 
@@ -149,7 +151,9 @@ export const deleteTransaction = async (req: MyReq, res: Response) => {
     await knex("transactions").delete().where({ id });
 
     return res.status(204).json();
-  } catch (error) {
-    return res.status(500).json({ message: "Internal server error" });
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ message: "Failed to delete transaction: " + error.message });
   }
 };
