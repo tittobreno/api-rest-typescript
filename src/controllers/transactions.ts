@@ -138,3 +138,19 @@ export const updateTransaction = async (req: MyReq, res: Response) => {
       .json({ message: "Internal server error: " + error.message });
   }
 };
+
+export const deleteTransaction = async (req: MyReq, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const transaction = await knex("transactions").where({ id }).first();
+
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    await knex("transactions").delete().where({ id });
+
+    return res.status(204).json();
+  } catch (error) {}
+};
