@@ -152,5 +152,7 @@ export const deleteTransaction = async (req: MyReq, res: Response) => {
     await knex("transactions").delete().where({ id });
 
     return res.status(204).json();
-  } catch (error) {}
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
