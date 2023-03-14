@@ -102,7 +102,7 @@ export const detailTransaction = async (req: MyReq, res: Response) => {
 
     return res
       .status(500)
-      .json({ message: "Failed to detail transaction " + error.message });
+      .json({ message: "Failed to detail transaction: " + error.message });
   }
 };
 
@@ -134,7 +134,7 @@ export const updateTransaction = async (req: MyReq, res: Response) => {
 
     return res
       .status(500)
-      .json({ message: "Failed to update transaction " + error.message });
+      .json({ message: "Failed to update transaction: " + error.message });
   }
 };
 
