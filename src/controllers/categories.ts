@@ -10,7 +10,7 @@ const getCategories = async (req: MyReq, res: Response) => {
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: "Internal server error:" + error.message });
+      .json({ message: "Failed to list categories: " + error.message });
   }
 };
 

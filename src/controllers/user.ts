@@ -37,7 +37,7 @@ export const createUser = async (req: Request, res: Response) => {
 
     return res
       .status(500)
-      .json({ message: "Internal server error:" + " " + error.message });
+      .json({ message: "Failed to create user: " + error.message });
   }
 };
 
@@ -81,6 +81,6 @@ export const signIn = async (req: Request, res: Response) => {
 
     return res
       .status(500)
-      .json({ message: "Internal server error:" + " " + error });
+      .json({ message: "Failed when trying to login: " + error.message });
   }
 };
