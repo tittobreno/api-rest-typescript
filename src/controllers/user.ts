@@ -57,7 +57,9 @@ export const signIn = async (req: Request, res: Response) => {
     );
 
     if (!checkIfPasswordIsCorrect) {
-      res.status(401).json({ message: "Email and/or password is incorrect" });
+      return res
+        .status(401)
+        .send({ message: "Email and/or password is incorrect" });
     }
 
     const createTokenData: TokenPayload = {
