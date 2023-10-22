@@ -18,3 +18,15 @@ export const authorizationHeaderSchema = z.object({
     message: "Invalid token",
   }),
 });
+
+export const editUserBody = z.object({
+  name: z.string().optional(),
+  email: z.string().email().optional(),
+});
+
+export const editPasswordBody = z.object({
+  password: z.optional(
+    z.string().min(6, { message: "The password must be 6 or more characters" })
+  ),
+  oldPassword: z.optional(z.string()),
+});

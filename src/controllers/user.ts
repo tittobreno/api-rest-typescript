@@ -6,7 +6,12 @@ import z from "zod";
 import knex from "../database/dbConnect";
 import { UserModel } from "../models/user";
 import { MyReq, TokenPayload } from "../types";
-import { createUserBody, signInBody } from "../validation/schemaUser";
+import {
+  createUserBody,
+  editPasswordBody,
+  editUserBody,
+  signInBody,
+} from "../validation/schemaUser";
 
 export const createUser = async (req: Request, res: Response) => {
   try {
@@ -89,26 +94,66 @@ export const signIn = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: MyReq, res: Response) => {
   const idUser = req.userData?.id;
+  const data: UserModel = req.body;
+
   try {
-    const { name, email, password } = createUserBody.parse(req.body);
+    let { password, oldPassword } = editPasswordBody.parse(data);
+    let { name, email } = editUserBody.parse(data);
 
-    const checkEmail = await knex("users")
-      .whereNot({ id: idUser })
-      .andWhere({ email })
-      .first();
-
-    if (checkEmail) {
-      return res
-        .status(401)
-        .json({ message: "The email provided already exists" });
+    if (name) {
+      const newName = name;
+      await knex("users").update({ name: newName }).where({ id: idUser });
+      return res.status(200).json();
     }
 
-    const encryptedPassword = await bcrypt.hash(password, 10);
-    await knex("users")
-      .update({ name, email, password: encryptedPassword })
-      .where({ id: idUser });
+    if (email) {
+      const newEmail = email;
 
-    return res.status(200).json();
+      const checkEmail = await knex("users")
+        .whereNot({ id: idUser })
+        .andWhere({ email })
+        .first();
+
+      if (checkEmail) {
+        return res
+          .status(401)
+          .json({ message: "The email provided already exists" });
+      } else {
+        await knex("users").update({ email: newEmail }).where({ id: idUser });
+        return res.status(200).json();
+      }
+    }
+
+    if (password) {
+      const newPassword = password;
+      const currentPassword = await knex("users")
+        .select("password")
+        .where({ id: idUser })
+        .first();
+
+      if (oldPassword === undefined) {
+        oldPassword = "";
+      }
+
+      const checkPassword = await bcrypt.compare(
+        oldPassword,
+        currentPassword.password
+      );
+
+      if (checkPassword) {
+        const encryptedPassword = await bcrypt.hash(newPassword, 10);
+
+        await knex("users")
+          .update({ password: encryptedPassword })
+          .where({ id: idUser });
+
+        return res.status(200).json();
+      } else {
+        return res.status(401).json({
+          message: "Failed when trying to update password: Unauthorized",
+        });
+      }
+    }
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       return res.status(401).json(error.errors);
