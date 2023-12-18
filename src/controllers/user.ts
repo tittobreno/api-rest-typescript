@@ -48,7 +48,7 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const signIn = async (req: Request, res: Response) => {
   try {
-    const { email, password } = signInBody.parse(req.body);
+    const { email, currentPassword } = signInBody.parse(req.body);
 
     const user: UserModel = await knex("users").where({ email }).first();
 
@@ -57,7 +57,7 @@ export const signIn = async (req: Request, res: Response) => {
     }
 
     const checkIfPasswordIsCorrect = await bcrypt.compare(
-      password,
+      currentPassword,
       user.password
     );
 
@@ -97,18 +97,10 @@ export const updateUser = async (req: MyReq, res: Response) => {
   const data: UserModel = req.body;
 
   try {
-    let { password, oldPassword } = editPasswordBody.parse(data);
+    let { newPassword, currentPassword } = editPasswordBody.parse(data);
     let { name, email } = editUserBody.parse(data);
 
-    if (name) {
-      const newName = name;
-      await knex("users").update({ name: newName }).where({ id: idUser });
-      return res.status(200).json();
-    }
-
-    if (email) {
-      const newEmail = email;
-
+    if (name || email) {
       const checkEmail = await knex("users")
         .whereNot({ id: idUser })
         .andWhere({ email })
@@ -118,26 +110,27 @@ export const updateUser = async (req: MyReq, res: Response) => {
         return res
           .status(401)
           .json({ message: "The email provided already exists" });
-      } else {
-        await knex("users").update({ email: newEmail }).where({ id: idUser });
-        return res.status(200).json();
+      }
+
+      if (name) {
+        await knex("users").update({ name }).where({ id: idUser });
+      }
+
+      if (email) {
+        await knex("users").update({ email }).where({ id: idUser });
       }
     }
 
-    if (password) {
-      const newPassword = password;
-      const currentPassword = await knex("users")
+    if (newPassword && currentPassword) {
+      const userPassword = await knex("users")
         .select("password")
         .where({ id: idUser })
         .first();
-
-      if (oldPassword === undefined) {
-        oldPassword = "";
-      }
+      console.log(userPassword);
 
       const checkPassword = await bcrypt.compare(
-        oldPassword,
-        currentPassword.password
+        currentPassword,
+        userPassword.password
       );
 
       if (checkPassword) {

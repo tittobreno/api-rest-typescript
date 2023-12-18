@@ -10,7 +10,7 @@ export const createUserBody = z.object({
 
 export const signInBody = z.object({
   email: z.string({ required_error: "The email is required" }).email(),
-  password: z.string({ required_error: "The password is required" }),
+  currentPassword: z.string({ required_error: "The password is required" }),
 });
 
 export const authorizationHeaderSchema = z.object({
@@ -25,8 +25,8 @@ export const editUserBody = z.object({
 });
 
 export const editPasswordBody = z.object({
-  password: z.optional(
+  newPassword: z.optional(
     z.string().min(6, { message: "The password must be 6 or more characters" })
   ),
-  oldPassword: z.optional(z.string()),
+  currentPassword: z.optional(z.string()),
 });

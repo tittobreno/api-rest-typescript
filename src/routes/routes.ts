@@ -22,7 +22,7 @@ router.post("/entrar", signIn);
 router.use(authenticateUser);
 
 router.patch("/usuario/editar", updateUser);
-router.get("/detalhar", detailUser);
+router.get("/usuario/detalhar", detailUser);
 
 router.get("/categorias", getCategories);
 
