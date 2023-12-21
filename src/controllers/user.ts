@@ -101,22 +101,21 @@ export const updateUser = async (req: MyReq, res: Response) => {
     let { name, email } = editUserBody.parse(data);
 
     if (name || email) {
-      const checkEmail = await knex("users")
-        .whereNot({ id: idUser })
-        .andWhere({ email })
-        .first();
-
-      if (checkEmail) {
-        return res
-          .status(401)
-          .json({ message: "The email provided already exists" });
-      }
-
       if (name) {
         await knex("users").update({ name }).where({ id: idUser });
+        return res.status(200).json();
       }
 
       if (email) {
+        const checkEmail = await knex("users")
+          .whereNot({ id: idUser })
+          .andWhere({ email })
+          .first();
+        if (checkEmail) {
+          return res
+            .status(401)
+            .json({ message: "The email provided already exists" });
+        }
         await knex("users").update({ email }).where({ id: idUser });
       }
     }
