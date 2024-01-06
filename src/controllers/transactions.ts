@@ -18,7 +18,7 @@ export const listTransactions = async (req: MyReq, res: Response) => {
     const listUserTransactions = await Promise.all(
       userTransactions.map(async (transaction) => {
         const category: CategoryModel = await knex("categories")
-          .where({ id: transaction.id })
+          .where({ id: transaction.category_id })
           .first();
 
         const transactionWithCategoryName = {

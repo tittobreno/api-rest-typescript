@@ -4,7 +4,8 @@ import { MyReq } from "../types";
 
 const getCategories = async (req: MyReq, res: Response) => {
   try {
-    const listCategories = await knex("categories");
+    let listCategories = [];
+    listCategories = await knex("categories");
 
     return res.status(200).json(listCategories);
   } catch (error: any) {
