@@ -94,7 +94,9 @@ export const detailTransaction = async (req: MyReq, res: Response) => {
       return res.status(404).json({ message: "Transaction not found" });
     }
 
-    return res.status(200).json(transaction);
+    return res
+      .status(200)
+      .json({ ...transaction, value: transaction.value / 100 });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       return res.status(500).json(error.errors);
