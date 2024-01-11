@@ -4,6 +4,7 @@ import {
   createTransaction,
   deleteTransaction,
   detailTransaction,
+  getSummary,
   listTransactions,
   updateTransaction,
 } from "../controllers/transactions";
@@ -31,5 +32,6 @@ router.post("/transacao/cadastrar", createTransaction);
 router.get("/transacao/detalhar/:id", detailTransaction);
 router.put("/transacao/editar/:id", updateTransaction);
 router.delete("/transacao/deletar/:id", deleteTransaction);
+router.get("/sumario", getSummary);
 
 export default router;

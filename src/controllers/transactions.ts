@@ -159,3 +159,33 @@ export const deleteTransaction = async (req: MyReq, res: Response) => {
       .json({ message: "Failed to delete transaction: " + error.message });
   }
 };
+
+export const getSummary = async (req: MyReq, res: Response) => {
+  try {
+    const id = req.userData?.id;
+
+    const earnings = await knex("transactions")
+      .sum({ totalEarnings: "value" })
+      .where({ user_id: id })
+      .andWhere({ type: "entry" })
+      .first();
+
+    const expenses = await knex("transactions")
+      .sum({ totalExpenses: "value" })
+      .where({ user_id: id })
+      .andWhere({ type: "output" })
+      .first();
+
+    const response = {
+      earnings: Number(earnings?.totalEarnings) || 0,
+      expenses: Number(expenses?.totalExpenses) || 0,
+      balance: earnings?.totalEarnings - expenses?.totalExpenses,
+    };
+
+    return res.status(200).json(response);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ message: "Failed to get summary: " + error.message });
+  }
+};
