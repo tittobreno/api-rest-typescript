@@ -32,6 +32,6 @@ router.post("/transacao/cadastrar", createTransaction);
 router.get("/transacao/detalhar/:id", detailTransaction);
 router.put("/transacao/editar/:id", updateTransaction);
 router.delete("/transacao/deletar/:id", deleteTransaction);
-router.get("/sumario", getSummary);
+router.get("/resumo", getSummary);
 
 export default router;
