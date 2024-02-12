@@ -24,6 +24,10 @@ export const editUserBody = z.object({
   email: z.string().email().optional(),
 });
 
+export const editUserAvatar = z.object({
+  avatar: z.string().optional(),
+});
+
 export const editPasswordBody = z.object({
   newPassword: z.optional(
     z.string().min(6, { message: "The password must be 6 or more characters" })

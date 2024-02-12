@@ -9,6 +9,7 @@ import { MyReq, TokenPayload } from "../types";
 import {
   createUserBody,
   editPasswordBody,
+  editUserAvatar,
   editUserBody,
   signInBody,
 } from "../validation/schemaUser";
@@ -99,6 +100,12 @@ export const updateUser = async (req: MyReq, res: Response) => {
   try {
     let { newPassword, currentPassword } = editPasswordBody.parse(data);
     let { name, email } = editUserBody.parse(data);
+    let { avatar } = editUserAvatar.parse(data.avatar);
+
+    if (avatar) {
+      await knex("users").update({ avatar }).where({ id: idUser });
+      return res.status(200).json();
+    }
 
     if (name || email) {
       if (name) {
@@ -125,7 +132,6 @@ export const updateUser = async (req: MyReq, res: Response) => {
         .select("password")
         .where({ id: idUser })
         .first();
-      console.log(userPassword);
 
       const checkPassword = await bcrypt.compare(
         currentPassword,

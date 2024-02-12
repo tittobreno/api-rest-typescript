@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT NOT NULL UNIQUE,
   password VARCHAR(60) NOT NULL,
   created_at timestamp
+  avatar text
 );
 
 CREATE TABLE IF NOT EXISTS categories (
