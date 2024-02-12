@@ -100,7 +100,7 @@ export const updateUser = async (req: MyReq, res: Response) => {
   try {
     let { newPassword, currentPassword } = editPasswordBody.parse(data);
     let { name, email } = editUserBody.parse(data);
-    let { avatar } = editUserAvatar.parse(data.avatar);
+    let { avatar } = editUserAvatar.parse(data);
 
     if (avatar) {
       await knex("users").update({ avatar }).where({ id: idUser });
