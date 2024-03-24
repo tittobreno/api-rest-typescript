@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Response, Request } from "express";
 import { z } from "zod";
 import knex from "../database/dbConnect";
 import { CategoryModel } from "../models/categories";
@@ -6,14 +6,38 @@ import { TransactionModel } from "../models/transactions";
 import { MyReq } from "../types";
 import { schemaBodyTransaction } from "../validation/schemaTransactions";
 
+const paginationParamsSchema = z.object({
+  skip: z.number(),
+  take: z.number(),
+});
+
 export const listTransactions = async (req: MyReq, res: Response) => {
   const userId = req.userData?.id;
+
+  const skip = parseInt(req.query.skip as string, 10);
+  const take = parseInt(req.query.take as string, 10);
+
+  const { skip: validatedSkip, take: validatedTake } =
+    paginationParamsSchema.parse({ skip, take });
+
   try {
-    const userTransactions: TransactionModel[] = await knex(
-      "transactions"
-    ).where({
-      user_id: userId,
-    });
+    const totalTransactionsCount = await knex("transactions")
+      .where({
+        user_id: userId,
+      })
+      .count("id as count")
+      .first();
+
+    const totalCount = totalTransactionsCount?.count
+      ? Number(totalTransactionsCount.count)
+      : 0;
+
+    const userTransactions: TransactionModel[] = await knex("transactions")
+      .where({
+        user_id: userId,
+      })
+      .offset(validatedSkip)
+      .limit(validatedTake);
 
     const listUserTransactions = await Promise.all(
       userTransactions.map(async (transaction) => {
@@ -30,7 +54,7 @@ export const listTransactions = async (req: MyReq, res: Response) => {
       })
     );
 
-    return res.status(200).json(listUserTransactions);
+    return res.status(200).json({ total: totalCount, listUserTransactions });
   } catch (error: any) {
     return res
       .status(500)
