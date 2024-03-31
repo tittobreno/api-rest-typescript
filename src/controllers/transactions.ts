@@ -16,15 +16,30 @@ export const listTransactions = async (req: MyReq, res: Response) => {
 
   const skip = parseInt(req.query.skip as string, 10);
   const take = parseInt(req.query.take as string, 10);
-
+  let categoryIds: number[] = [];
+  if (typeof req.query.categories === "string") {
+    categoryIds = req.query.categories
+      .split(",")
+      .map((categoryId) => parseInt(categoryId, 10));
+  } else if (Array.isArray(req.query.categories)) {
+    categoryIds = req.query.categories.map((categoryId) =>
+      parseInt(categoryId as string, 10)
+    );
+  }
   const { skip: validatedSkip, take: validatedTake } =
     paginationParamsSchema.parse({ skip, take });
 
   try {
-    const totalTransactionsCount = await knex("transactions")
-      .where({
-        user_id: userId,
-      })
+    let transactionsQuery = knex("transactions").where({
+      user_id: userId,
+    });
+
+    if (categoryIds.length > 0) {
+      transactionsQuery = transactionsQuery.whereIn("category_id", categoryIds);
+    }
+
+    const totalTransactionsCount = await transactionsQuery
+      .clone()
       .count("id as count")
       .first();
 
@@ -32,10 +47,8 @@ export const listTransactions = async (req: MyReq, res: Response) => {
       ? Number(totalTransactionsCount.count)
       : 0;
 
-    const userTransactions: TransactionModel[] = await knex("transactions")
-      .where({
-        user_id: userId,
-      })
+    const userTransactions: TransactionModel[] = await transactionsQuery
+      .clone()
       .offset(validatedSkip)
       .limit(validatedTake);
 
@@ -47,7 +60,7 @@ export const listTransactions = async (req: MyReq, res: Response) => {
 
         const transactionWithCategoryName = {
           ...transaction,
-          category_name: category.title,
+          category_name: category?.title || "Uncategorized", // Definindo um nome padrão caso a categoria não seja encontrada
         };
 
         return transactionWithCategoryName;
