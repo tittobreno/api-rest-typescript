@@ -3,7 +3,7 @@ import { z } from "zod";
 import knex from "../database/dbConnect";
 import { CategoryModel } from "../models/categories";
 import { TransactionModel } from "../models/transactions";
-import { MyReq } from "../types";
+import { MyReq } from "../../@types";
 import { schemaBodyTransaction } from "../validation/schemaTransactions";
 
 const paginationParamsSchema = z.object({

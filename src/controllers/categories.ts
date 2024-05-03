@@ -1,6 +1,6 @@
 import { Response } from "express";
 import knex from "../database/dbConnect";
-import { MyReq } from "../types";
+import { MyReq } from "../../@types";
 
 const getCategories = async (req: MyReq, res: Response) => {
   try {

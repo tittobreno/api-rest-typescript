@@ -5,7 +5,7 @@ import jwt, { Secret } from "jsonwebtoken";
 import z from "zod";
 import knex from "../database/dbConnect";
 import { UserModel } from "../models/user";
-import { MyReq, TokenPayload } from "../types";
+import { MyReq, TokenPayload } from "../../@types";
 import {
   createUserBody,
   editPasswordBody,
